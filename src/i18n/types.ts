@@ -1,4 +1,4 @@
-export type SiteLanguage = 'en' | 'hi' | 'ta';
+export type SiteLanguage = 'en' | 'hi' | 'ta' | 'ml' | 'te';
 
 export interface LocalizedTripCategory {
   name: string;

@@ -12,6 +12,8 @@ const LANGUAGE_OPTIONS: Array<{ value: SiteLanguage; label: string }> = [
   { value: 'en', label: 'English' },
   { value: 'hi', label: 'Hindi (हिन्दी)' },
   { value: 'ta', label: 'Tamil (தமிழ்)' },
+  { value: 'ml', label: 'Malayalam (മലയാളം)' },
+  { value: 'te', label: 'Telugu (తెలుగు)' },
 ];
 
 export function Header({ onOpenBooking }: HeaderProps) {

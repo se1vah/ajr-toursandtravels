@@ -3,11 +3,15 @@ import { SiteLanguage, TranslationBundle } from '../i18n/types';
 import { en } from '../i18n/en';
 import { hi } from '../i18n/hi';
 import { ta } from '../i18n/ta';
+import { ml } from '../i18n/ml';
+import { te } from '../i18n/te';
 
 const TRANSLATIONS: Record<SiteLanguage, TranslationBundle> = {
   en,
   hi,
   ta,
+  ml,
+  te,
 };
 
 const STORAGE_KEY = 'ajr_site_language';
@@ -24,7 +28,13 @@ function getInitialLanguage(): SiteLanguage {
   if (typeof window === 'undefined') return 'en';
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved === 'en' || saved === 'hi' || saved === 'ta') {
+    if (
+      saved === 'en' ||
+      saved === 'hi' ||
+      saved === 'ta' ||
+      saved === 'ml' ||
+      saved === 'te'
+    ) {
       return saved;
     }
   } catch {
