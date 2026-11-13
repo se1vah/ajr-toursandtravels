@@ -1,0 +1,6 @@
+{
+  "name": "AJR Tours and Travels",
+  "description": "Trusted travel and vehicle rental services in Thangachimadam & Rameswaram, Tamil Nadu with 10+ years of experience. Book taxis, outstation trips, and customized South India tour packages with dedicated Hindi and English booking support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
