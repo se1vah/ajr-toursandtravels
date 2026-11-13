@@ -3,11 +3,13 @@ import { MessageCircle, Phone, CheckCircle2, AlertCircle } from 'lucide-react';
 import { BUSINESS_INFO, BookingLanguage } from '../data/business';
 import { TRIP_CATEGORIES } from '../data/tripCategories';
 import { buildWhatsAppUrl } from '../utils/whatsapp';
+import { useLanguage } from '../context/LanguageContext';
 
 export function QuickBookingForm() {
+  const { t } = useLanguage();
   const [customerName, setCustomerName] = useState('');
   const [mobileNumber, setMobileNumber] = useState('');
-  const [tripType, setTripType] = useState('One Way Trip');
+  const [tripCategoryId, setTripCategoryId] = useState('one-way-trip');
   const [pickupLocation, setPickupLocation] = useState('');
   const [destination, setDestination] = useState('');
   const [travelDate, setTravelDate] = useState('');
@@ -17,33 +19,38 @@ export function QuickBookingForm() {
   const [error, setError] = useState<string | null>(null);
   const [submittedUrl, setSubmittedUrl] = useState<string | null>(null);
 
+  const resolvedTripName =
+    tripCategoryId === 'custom-package'
+      ? t.quickBooking.customPackageOption
+      : t.tripCategories[tripCategoryId]?.name ?? tripCategoryId;
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setSubmittedUrl(null);
 
     if (!customerName.trim()) {
-      setError('Please enter your name.');
+      setError(t.quickBooking.errName);
       return;
     }
     const digits = mobileNumber.replace(/\D/g, '');
     if (digits.length < 10) {
-      setError('Please enter a valid 10-digit mobile number.');
+      setError(t.quickBooking.errPhone);
       return;
     }
     if (!pickupLocation.trim() || !destination.trim()) {
-      setError('Please enter both pickup location and destination.');
+      setError(t.quickBooking.errRoute);
       return;
     }
     if (!travelDate) {
-      setError('Please choose a travel date.');
+      setError(t.quickBooking.errDate);
       return;
     }
 
     const url = buildWhatsAppUrl({
       customerName,
       mobileNumber,
-      serviceName: tripType,
+      serviceName: resolvedTripName,
       pickupLocation,
       destination,
       travelDate,
@@ -61,6 +68,12 @@ export function QuickBookingForm() {
       ? BUSINESS_INFO.contacts.hindi
       : BUSINESS_INFO.contacts.english;
 
+  const activeContactLabel =
+    preferredLanguage === 'Hindi' ? t.contacts.hindiLabel : t.contacts.englishLabel;
+
+  const activeDeskDisplayName =
+    preferredLanguage === 'Hindi' ? t.bookingModal.langHindi : t.bookingModal.langEnglish;
+
   return (
     <section
       id="quick-booking"
@@ -71,16 +84,16 @@ export function QuickBookingForm() {
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 pb-6 border-b border-slate-200">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-orange-600">
-              Instant WhatsApp Reservation
+              {t.quickBooking.kicker}
             </p>
             <h2
               id="quick-booking-heading"
               className="text-2xl sm:text-3xl font-bold tracking-tight text-navy-900 mt-1"
             >
-              Quick Booking Enquiry
+              {t.quickBooking.heading}
             </h2>
             <p className="text-sm text-slate-600 mt-1">
-              Share your trip details below to get a custom quotation directly in English or Hindi.
+              {t.quickBooking.subtitle}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3 text-xs">
@@ -89,14 +102,14 @@ export function QuickBookingForm() {
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 font-medium text-navy-900 hover:border-orange-300 hover:bg-orange-50 transition-colors tabular-nums whitespace-nowrap"
             >
               <Phone className="w-3.5 h-3.5 text-orange-600" />
-              Hindi Support: {BUSINESS_INFO.contacts.hindi.number}
+              {t.contacts.hindiLabel}: {BUSINESS_INFO.contacts.hindi.number}
             </a>
             <a
               href={BUSINESS_INFO.contacts.english.telHref}
               className="inline-flex items-center gap-1.5 rounded-xl border border-slate-200 bg-slate-50 px-3.5 py-2 font-medium text-navy-900 hover:border-orange-300 hover:bg-orange-50 transition-colors tabular-nums whitespace-nowrap"
             >
               <Phone className="w-3.5 h-3.5 text-orange-600" />
-              English Support: {BUSINESS_INFO.contacts.english.number}
+              {t.contacts.englishLabel}: {BUSINESS_INFO.contacts.english.number}
             </a>
           </div>
         </div>
@@ -117,7 +130,7 @@ export function QuickBookingForm() {
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 shrink-0 text-emerald-700" />
                 <span>
-                  Enquiry ready for {activeContact.label} ({activeContact.display}).
+                  {t.quickBooking.readyPrefix} {activeContactLabel} ({activeContact.display}).
                 </span>
               </div>
               <a
@@ -127,7 +140,7 @@ export function QuickBookingForm() {
                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-700 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-800 transition-colors whitespace-nowrap"
               >
                 <MessageCircle className="w-4 h-4" />
-                Continue on WhatsApp
+                {t.quickBooking.continueWhatsapp}
               </a>
             </div>
           )}
@@ -135,7 +148,7 @@ export function QuickBookingForm() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
               <label htmlFor="qb-name" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Customer Name *
+                {t.quickBooking.customerName}
               </label>
               <input
                 id="qb-name"
@@ -143,14 +156,14 @@ export function QuickBookingForm() {
                 required
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
-                placeholder="Your full name"
+                placeholder={t.quickBooking.customerNamePlaceholder}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               />
             </div>
 
             <div>
               <label htmlFor="qb-phone" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Mobile Number *
+                {t.quickBooking.mobileNumber}
               </label>
               <input
                 id="qb-phone"
@@ -158,33 +171,33 @@ export function QuickBookingForm() {
                 required
                 value={mobileNumber}
                 onChange={(e) => setMobileNumber(e.target.value)}
-                placeholder="10-digit mobile number"
+                placeholder={t.quickBooking.mobilePlaceholder}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 tabular-nums focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               />
             </div>
 
             <div>
               <label htmlFor="qb-trip-type" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Trip Type *
+                {t.quickBooking.tripType}
               </label>
               <select
                 id="qb-trip-type"
-                value={tripType}
-                onChange={(e) => setTripType(e.target.value)}
+                value={tripCategoryId}
+                onChange={(e) => setTripCategoryId(e.target.value)}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               >
                 {TRIP_CATEGORIES.map((cat) => (
-                  <option key={cat.id} value={cat.name}>
-                    {cat.name}
+                  <option key={cat.id} value={cat.id}>
+                    {t.tripCategories[cat.id]?.name ?? cat.name}
                   </option>
                 ))}
-                <option value="Custom Tour Package">Custom Tour Package</option>
+                <option value="custom-package">{t.quickBooking.customPackageOption}</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="qb-language" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Preferred Language *
+                {t.quickBooking.preferredDesk}
               </label>
               <select
                 id="qb-language"
@@ -192,14 +205,14 @@ export function QuickBookingForm() {
                 onChange={(e) => setPreferredLanguage(e.target.value as BookingLanguage)}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               >
-                <option value="English">English (8870451368)</option>
-                <option value="Hindi">Hindi (9342207368)</option>
+                <option value="English">{t.quickBooking.englishDeskOption}</option>
+                <option value="Hindi">{t.quickBooking.hindiDeskOption}</option>
               </select>
             </div>
 
             <div>
               <label htmlFor="qb-pickup" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Pickup Location *
+                {t.quickBooking.pickupLocation}
               </label>
               <input
                 id="qb-pickup"
@@ -207,14 +220,14 @@ export function QuickBookingForm() {
                 required
                 value={pickupLocation}
                 onChange={(e) => setPickupLocation(e.target.value)}
-                placeholder="e.g., Thangachimadam / Rameswaram"
+                placeholder={t.quickBooking.pickupPlaceholder}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               />
             </div>
 
             <div>
               <label htmlFor="qb-destination" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Destination *
+                {t.quickBooking.destination}
               </label>
               <input
                 id="qb-destination"
@@ -222,14 +235,14 @@ export function QuickBookingForm() {
                 required
                 value={destination}
                 onChange={(e) => setDestination(e.target.value)}
-                placeholder="e.g., Madurai / Kanyakumari / Ooty"
+                placeholder={t.quickBooking.destinationPlaceholder}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               />
             </div>
 
             <div>
               <label htmlFor="qb-date" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Travel Date *
+                {t.quickBooking.travelDate}
               </label>
               <input
                 id="qb-date"
@@ -243,7 +256,7 @@ export function QuickBookingForm() {
 
             <div>
               <label htmlFor="qb-passengers" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Number of Passengers *
+                {t.quickBooking.passengers}
               </label>
               <input
                 id="qb-passengers"
@@ -261,14 +274,14 @@ export function QuickBookingForm() {
           <div className="flex flex-col md:flex-row gap-4 items-stretch md:items-end">
             <div className="flex-1">
               <label htmlFor="qb-notes" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Additional Requirements
+                {t.quickBooking.additionalRequirements}
               </label>
               <input
                 id="qb-notes"
                 type="text"
                 value={additionalRequirements}
                 onChange={(e) => setAdditionalRequirements(e.target.value)}
-                placeholder="Preferred vehicle category, sightseeing stops, flight/train arrival time..."
+                placeholder={t.quickBooking.additionalPlaceholder}
                 className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
               />
             </div>
@@ -277,7 +290,7 @@ export function QuickBookingForm() {
               className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-2.5 text-sm font-semibold text-white hover:bg-orange-700 transition-colors whitespace-nowrap shrink-0 min-h-[42px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
             >
               <MessageCircle className="w-4 h-4" />
-              Book via WhatsApp ({preferredLanguage})
+              {t.quickBooking.submitViaWhatsapp} ({activeDeskDisplayName})
             </button>
           </div>
         </form>

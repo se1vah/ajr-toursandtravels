@@ -12,6 +12,7 @@ import { PackageDetailPage } from './pages/PackageDetailPage';
 import { VehiclesPage } from './pages/VehiclesPage';
 import { GalleryPage } from './pages/GalleryPage';
 import { ContactPage } from './pages/ContactPage';
+import { LanguageProvider } from './context/LanguageContext';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -38,58 +39,60 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
-      <ScrollToTop />
+    <LanguageProvider>
+      <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+        <ScrollToTop />
 
-      {mapsQuotaExceeded && (
-        <div className="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm">
-          <span>
-            Google Maps Platform quota reached. If you are the app owner, visit{' '}
-            <a
-              href="https://developers.google.com/maps/ai/ai-studio?utm_campaign=gmp_mcp_codeassist_v1_aistudio#quota_exceeded_errors"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="underline font-semibold text-amber-950 hover:text-amber-800"
-            >
-              maps developer site
-            </a>{' '}
-            for instructions to update your account.
-          </span>
-        </div>
-      )}
+        {mapsQuotaExceeded && (
+          <div className="bg-amber-50 border-b border-amber-200 text-amber-900 px-4 py-2.5 text-xs md:text-sm text-center sticky top-0 z-50 shadow-sm">
+            <span>
+              Google Maps Platform quota reached. If you are the app owner, visit{' '}
+              <a
+                href="https://developers.google.com/maps/ai/ai-studio?utm_campaign=gmp_mcp_codeassist_v1_aistudio#quota_exceeded_errors"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-semibold text-amber-950 hover:text-amber-800"
+              >
+                maps developer site
+              </a>{' '}
+              for instructions to update your account.
+            </span>
+          </div>
+        )}
 
-      <Header onOpenBooking={handleOpenBooking} />
+        <Header onOpenBooking={handleOpenBooking} />
 
-      <main className="flex-1">
-        <Routes>
-          <Route path="/" element={<HomePage onOpenBooking={handleOpenBooking} />} />
-          <Route path="/about" element={<AboutPage onOpenBooking={handleOpenBooking} />} />
-          <Route
-            path="/trip-categories"
-            element={<TripCategoriesPage onOpenBooking={handleOpenBooking} />}
-          />
-          <Route
-            path="/tour-packages"
-            element={<TourPackagesPage onOpenBooking={handleOpenBooking} />}
-          />
-          <Route
-            path="/tour-packages/:slug"
-            element={<PackageDetailPage onOpenBooking={handleOpenBooking} />}
-          />
-          <Route path="/vehicles" element={<VehiclesPage onOpenBooking={handleOpenBooking} />} />
-          <Route path="/gallery" element={<GalleryPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="*" element={<HomePage onOpenBooking={handleOpenBooking} />} />
-        </Routes>
-      </main>
+        <main className="flex-1">
+          <Routes>
+            <Route path="/" element={<HomePage onOpenBooking={handleOpenBooking} />} />
+            <Route path="/about" element={<AboutPage onOpenBooking={handleOpenBooking} />} />
+            <Route
+              path="/trip-categories"
+              element={<TripCategoriesPage onOpenBooking={handleOpenBooking} />}
+            />
+            <Route
+              path="/tour-packages"
+              element={<TourPackagesPage onOpenBooking={handleOpenBooking} />}
+            />
+            <Route
+              path="/tour-packages/:slug"
+              element={<PackageDetailPage onOpenBooking={handleOpenBooking} />}
+            />
+            <Route path="/vehicles" element={<VehiclesPage onOpenBooking={handleOpenBooking} />} />
+            <Route path="/gallery" element={<GalleryPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="*" element={<HomePage onOpenBooking={handleOpenBooking} />} />
+          </Routes>
+        </main>
 
-      <Footer />
-      <WhatsAppWidget />
-      <BookingModal
-        isOpen={bookingModalOpen}
-        initialService={initialBookingService}
-        onClose={() => setBookingModalOpen(false)}
-      />
-    </div>
+        <Footer />
+        <WhatsAppWidget />
+        <BookingModal
+          isOpen={bookingModalOpen}
+          initialService={initialBookingService}
+          onClose={() => setBookingModalOpen(false)}
+        />
+      </div>
+    </LanguageProvider>
   );
 }

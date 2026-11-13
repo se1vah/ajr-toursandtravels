@@ -2,18 +2,21 @@ import { Link } from 'react-router-dom';
 import { Phone, Mail, MapPin, MessageCircle } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/business';
 import { buildDirectWhatsAppUrl } from '../utils/whatsapp';
-
-const QUICK_LINKS = [
-  { to: '/', label: 'Home' },
-  { to: '/about', label: 'About Us' },
-  { to: '/trip-categories', label: 'Trip Categories' },
-  { to: '/tour-packages', label: 'Tour Packages' },
-  { to: '/vehicles', label: 'Our Vehicles' },
-  { to: '/gallery', label: 'Gallery' },
-  { to: '/contact', label: 'Contact Us' },
-];
+import { useLanguage } from '../context/LanguageContext';
 
 export function Footer() {
+  const { t } = useLanguage();
+
+  const quickLinks = [
+    { to: '/', label: t.nav.home },
+    { to: '/about', label: t.nav.about },
+    { to: '/trip-categories', label: t.nav.tripCategories },
+    { to: '/tour-packages', label: t.nav.tourPackages },
+    { to: '/vehicles', label: t.nav.vehicles },
+    { to: '/gallery', label: t.nav.gallery },
+    { to: '/contact', label: t.nav.contact },
+  ];
+
   return (
     <footer className="bg-navy-950 text-slate-300 border-t border-navy-800">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
@@ -21,25 +24,24 @@ export function Footer() {
           {/* Column 1: Company */}
           <div className="space-y-4">
             <h2 className="font-display text-xl font-bold text-white tracking-tight">
-              {BUSINESS_INFO.name}
+              {t.brand.name}
             </h2>
             <p className="text-sm leading-relaxed text-slate-300">
-              Trusted travel and vehicle rental partner in Thangachimadam &amp; Rameswaram with{' '}
-              {BUSINESS_INFO.experience} of experience serving pilgrims, families, institutions, and corporate travellers.
+              {t.footer.summary}
             </p>
             <div className="flex items-start gap-2.5 text-sm text-slate-300 pt-1">
               <MapPin className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" aria-hidden="true" />
-              <span>{BUSINESS_INFO.address}</span>
+              <span>{t.brand.address}</span>
             </div>
           </div>
 
           {/* Column 2: Quick Links */}
           <div>
             <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-white mb-4">
-              Quick Links
+              {t.footer.quickLinksHeading}
             </h3>
             <ul className="space-y-2.5 text-sm">
-              {QUICK_LINKS.map((link) => (
+              {quickLinks.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}
@@ -55,11 +57,11 @@ export function Footer() {
           {/* Column 3: Language Booking Desks */}
           <div>
             <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-white mb-4">
-              Language Booking Desks
+              {t.footer.desksHeading}
             </h3>
             <div className="space-y-4 text-sm">
               <div className="rounded-xl bg-navy-900 border border-navy-800 p-3.5">
-                <p className="text-xs font-semibold text-orange-400">Hindi Booking Support</p>
+                <p className="text-xs font-semibold text-orange-400">{t.contacts.hindiLabel}</p>
                 <a
                   href={BUSINESS_INFO.contacts.hindi.telHref}
                   className="mt-1 inline-flex items-center gap-2 font-semibold text-white hover:text-orange-400 tabular-nums"
@@ -75,13 +77,13 @@ export function Footer() {
                     className="inline-flex items-center gap-1.5 text-xs text-slate-300 hover:text-white transition-colors"
                   >
                     <MessageCircle className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
-                    WhatsApp Hindi Desk
+                    {t.contacts.whatsappHindi}
                   </a>
                 </div>
               </div>
 
               <div className="rounded-xl bg-navy-900 border border-navy-800 p-3.5">
-                <p className="text-xs font-semibold text-orange-400">English Booking Support</p>
+                <p className="text-xs font-semibold text-orange-400">{t.contacts.englishLabel}</p>
                 <a
                   href={BUSINESS_INFO.contacts.english.telHref}
                   className="mt-1 inline-flex items-center gap-2 font-semibold text-white hover:text-orange-400 tabular-nums"
@@ -97,7 +99,7 @@ export function Footer() {
                     className="inline-flex items-center gap-1.5 text-xs text-slate-300 hover:text-white transition-colors"
                   >
                     <MessageCircle className="w-3.5 h-3.5 text-emerald-400" aria-hidden="true" />
-                    WhatsApp English Desk
+                    {t.contacts.whatsappEnglish}
                   </a>
                 </div>
               </div>
@@ -107,11 +109,11 @@ export function Footer() {
           {/* Column 4: General Contact & Address */}
           <div>
             <h3 className="font-display text-sm font-semibold uppercase tracking-wider text-white mb-4">
-              Contact Information
+              {t.footer.contactHeading}
             </h3>
             <ul className="space-y-3 text-sm">
               <li>
-                <span className="block text-xs text-slate-400">General Enquiries</span>
+                <span className="block text-xs text-slate-400">{t.footer.generalLabel}</span>
                 <a
                   href={BUSINESS_INFO.contacts.general.telHref}
                   className="inline-flex items-center gap-2 font-semibold text-white hover:text-orange-400 tabular-nums mt-0.5"
@@ -121,7 +123,7 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <span className="block text-xs text-slate-400">Email</span>
+                <span className="block text-xs text-slate-400">{t.footer.emailLabel}</span>
                 <a
                   href={`mailto:${BUSINESS_INFO.email}`}
                   className="inline-flex items-center gap-2 font-medium text-white hover:text-orange-400 mt-0.5 break-all"
@@ -131,16 +133,16 @@ export function Footer() {
                 </a>
               </li>
               <li>
-                <span className="block text-xs text-slate-400">Office Address</span>
-                <p className="text-slate-300 mt-0.5">{BUSINESS_INFO.address}</p>
+                <span className="block text-xs text-slate-400">{t.footer.addressLabel}</span>
+                <p className="text-slate-300 mt-0.5">{t.brand.address}</p>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-12 pt-8 border-t border-navy-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-          <p>© 2026 AJR Tours and Travels. All Rights Reserved.</p>
-          <p>{BUSINESS_INFO.cityRegion}</p>
+          <p>{t.footer.copyright}</p>
+          <p>{t.brand.cityRegion}</p>
         </div>
       </div>
     </footer>

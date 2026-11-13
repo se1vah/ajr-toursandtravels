@@ -11,6 +11,7 @@ import {
 } from '@vis.gl/react-google-maps';
 import { MapPin, ExternalLink } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/business';
+import { useLanguage } from '../context/LanguageContext';
 
 const MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string | undefined;
 
@@ -19,6 +20,7 @@ const OFFICE_POSITION = BUSINESS_INFO.coordinates;
 function OfficeLocationMarker() {
   const [markerRef, marker] = useAdvancedMarkerRef();
   const [infoWindowOpen, setInfoWindowOpen] = useState(true);
+  const { t } = useLanguage();
 
   const handleMarkerClick = useCallback(() => {
     setInfoWindowOpen((prev) => !prev);
@@ -30,7 +32,7 @@ function OfficeLocationMarker() {
         ref={markerRef}
         position={OFFICE_POSITION}
         onClick={handleMarkerClick}
-        title={BUSINESS_INFO.name}
+        title={t.brand.name}
       >
         <Pin background="#EA580C" borderColor="#0B1F3A" glyphColor="#FFFFFF" />
       </AdvancedMarker>
@@ -41,10 +43,10 @@ function OfficeLocationMarker() {
           onCloseClick={() => setInfoWindowOpen(false)}
         >
           <div className="p-1 text-slate-900">
-            <p className="font-display font-bold text-sm text-navy-900">{BUSINESS_INFO.name}</p>
-            <p className="text-xs text-slate-600 mt-1">{BUSINESS_INFO.address}</p>
+            <p className="font-display font-bold text-sm text-navy-900">{t.brand.name}</p>
+            <p className="text-xs text-slate-600 mt-1">{t.brand.address}</p>
             <p className="text-xs text-slate-700 mt-1.5 tabular-nums">
-              General: {BUSINESS_INFO.contacts.general.number}
+              {t.contactPage.mapGeneralPrefix} {BUSINESS_INFO.contacts.general.number}
             </p>
           </div>
         </InfoWindow>
@@ -77,6 +79,7 @@ function MapViewportWithStatus() {
 }
 
 function MapFallbackCard() {
+  const { t } = useLanguage();
   const mapsDirectionsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
     `${BUSINESS_INFO.name}, ${BUSINESS_INFO.address}`,
   )}`;
@@ -86,15 +89,15 @@ function MapFallbackCard() {
       <div className="w-12 h-12 rounded-2xl bg-navy-900 text-orange-400 flex items-center justify-center mb-4">
         <MapPin className="w-6 h-6" />
       </div>
-      <h3 className="font-display text-lg font-bold text-navy-900">{BUSINESS_INFO.name}</h3>
-      <p className="text-sm text-slate-600 mt-1 max-w-sm">{BUSINESS_INFO.address}</p>
+      <h3 className="font-display text-lg font-bold text-navy-900">{t.brand.name}</h3>
+      <p className="text-sm text-slate-600 mt-1 max-w-sm">{t.brand.address}</p>
       <a
         href={mapsDirectionsUrl}
         target="_blank"
         rel="noopener noreferrer"
         className="mt-5 inline-flex items-center gap-2 rounded-xl bg-navy-900 px-5 py-2.5 text-sm font-semibold text-white hover:bg-navy-800 transition-colors"
       >
-        <span>Open Location in Google Maps</span>
+        <span>{t.contactPage.mapOpenBtn}</span>
         <ExternalLink className="w-4 h-4" />
       </a>
     </div>

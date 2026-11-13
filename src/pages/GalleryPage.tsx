@@ -4,6 +4,7 @@ import { SeoHead } from '../components/SeoHead';
 import { SafeImage } from '../components/SafeImage';
 import { LanguageSupportStrip } from '../components/LanguageSupportStrip';
 import { GALLERY_ITEMS, GalleryCategory } from '../data/gallery';
+import { useLanguage } from '../context/LanguageContext';
 
 const GALLERY_FILTERS: GalleryCategory[] = [
   'All',
@@ -17,6 +18,7 @@ const GALLERY_FILTERS: GalleryCategory[] = [
 export function GalleryPage() {
   const [activeCategory, setActiveCategory] = useState<GalleryCategory>('All');
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const { t } = useLanguage();
 
   const filteredItems =
     activeCategory === 'All'
@@ -45,24 +47,25 @@ export function GalleryPage() {
   }, [lightboxIndex, filteredItems.length]);
 
   const activeItem = lightboxIndex !== null ? filteredItems[lightboxIndex] : null;
+  const activeLoc = activeItem ? t.galleryItems[activeItem.id] : undefined;
 
   return (
     <>
       <SeoHead
-        title="Travel Gallery – Destinations, Fleet & Trips | AJR Tours and Travels"
-        description="View travel highlights from AJR Tours and Travels featuring Rameswaram, Pamban Bridge, Dhanushkodi, Kodaikanal, family tours, pilgrimage arrivals, and touring vehicles."
+        title={t.galleryPage.seoTitle}
+        description={t.galleryPage.seoDescription}
       />
 
       <section className="bg-navy-950 text-white py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
-            Destinations · Vehicles · Customer Journeys
+            {t.galleryPage.kicker}
           </p>
           <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight mt-2 text-balance">
-            Photo Gallery
+            {t.galleryPage.title}
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
-            Highlights from coastal Tamil Nadu, temple pilgrimage routes, hill station retreats, and our passenger touring fleet.
+            {t.galleryPage.heroSub}
           </p>
         </div>
       </section>
@@ -85,44 +88,56 @@ export function GalleryPage() {
                       : 'text-slate-600 hover:text-navy-900'
                   }`}
                 >
-                  {category}
+                  {t.galleryPage.categoryTabs[category]}
                 </button>
               ))}
             </div>
             <p className="text-sm text-slate-600 tabular-nums">
-              {filteredItems.length} {filteredItems.length === 1 ? 'photo' : 'photos'}
+              {filteredItems.length}{' '}
+              {filteredItems.length === 1
+                ? t.galleryPage.photoSingular
+                : t.galleryPage.photoPlural}
             </p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredItems.map((item, idx) => (
-              <button
-                key={item.id}
-                type="button"
-                onClick={() => setLightboxIndex(idx)}
-                className="group text-left bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-slate-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
-              >
-                <div className="aspect-4/3 overflow-hidden bg-slate-100">
-                  <SafeImage
-                    src={item.image}
-                    alt={item.alt}
-                    fallbackLabel={item.title}
-                    className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
-                  />
-                </div>
-                <div className="p-5">
-                  <p className="text-xs text-slate-500">
-                    {item.category} <span aria-hidden="true">·</span> {item.location}
-                  </p>
-                  <h2 className="font-display text-lg font-bold text-navy-900 mt-1">
-                    {item.title}
-                  </h2>
-                  <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
-                    {item.caption}
-                  </p>
-                </div>
-              </button>
-            ))}
+            {filteredItems.map((item, idx) => {
+              const loc = t.galleryItems[item.id];
+              const title = loc?.title ?? item.title;
+              const categoryLabel = loc?.categoryLabel ?? item.category;
+              const location = loc?.location ?? item.location;
+              const caption = loc?.caption ?? item.caption;
+              const alt = loc?.alt ?? item.alt;
+
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setLightboxIndex(idx)}
+                  className="group text-left bg-white rounded-2xl border border-slate-200 overflow-hidden hover:border-slate-300 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500"
+                >
+                  <div className="aspect-4/3 overflow-hidden bg-slate-100">
+                    <SafeImage
+                      src={item.image}
+                      alt={alt}
+                      fallbackLabel={title}
+                      className="w-full h-full object-cover group-hover:scale-[1.03] transition-transform duration-300"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <p className="text-xs text-slate-500">
+                      {categoryLabel} <span aria-hidden="true">·</span> {location}
+                    </p>
+                    <h2 className="font-display text-lg font-bold text-navy-900 mt-1">
+                      {title}
+                    </h2>
+                    <p className="mt-1.5 text-sm text-slate-600 leading-relaxed">
+                      {caption}
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -131,7 +146,7 @@ export function GalleryPage() {
         <div
           role="dialog"
           aria-modal="true"
-          aria-label={activeItem.title}
+          aria-label={activeLoc?.title ?? activeItem.title}
           className="fixed inset-0 z-50 bg-navy-950/90 backdrop-blur-xs flex items-center justify-center p-4"
           onClick={() => setLightboxIndex(null)}
         >
@@ -142,14 +157,17 @@ export function GalleryPage() {
             <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/10 text-white">
               <div>
                 <p className="text-xs text-orange-400">
-                  {activeItem.category} · {activeItem.location}
+                  {activeLoc?.categoryLabel ?? activeItem.category} ·{' '}
+                  {activeLoc?.location ?? activeItem.location}
                 </p>
-                <p className="font-display font-bold text-base">{activeItem.title}</p>
+                <p className="font-display font-bold text-base">
+                  {activeLoc?.title ?? activeItem.title}
+                </p>
               </div>
               <button
                 type="button"
                 onClick={() => setLightboxIndex(null)}
-                aria-label="Close photo preview"
+                aria-label={t.galleryPage.closePreview}
                 className="p-2 rounded-lg text-slate-300 hover:text-white hover:bg-white/10 transition-colors"
               >
                 <X className="w-5 h-5" />
@@ -158,7 +176,7 @@ export function GalleryPage() {
             <div className="aspect-4/3 bg-black relative">
               <SafeImage
                 src={activeItem.image}
-                alt={activeItem.alt}
+                alt={activeLoc?.alt ?? activeItem.alt}
                 className="w-full h-full object-contain"
               />
               {filteredItems.length > 1 && (
@@ -172,7 +190,7 @@ export function GalleryPage() {
                           : (prev - 1 + filteredItems.length) % filteredItems.length,
                       )
                     }
-                    aria-label="Previous photo"
+                    aria-label={t.galleryPage.prevPhoto}
                     className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-navy-950/80 text-white hover:bg-orange-600 transition-colors"
                   >
                     <ChevronLeft className="w-5 h-5" />
@@ -184,7 +202,7 @@ export function GalleryPage() {
                         prev === null ? null : (prev + 1) % filteredItems.length,
                       )
                     }
-                    aria-label="Next photo"
+                    aria-label={t.galleryPage.nextPhoto}
                     className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-navy-950/80 text-white hover:bg-orange-600 transition-colors"
                   >
                     <ChevronRight className="w-5 h-5" />
@@ -193,7 +211,7 @@ export function GalleryPage() {
               )}
             </div>
             <div className="px-5 py-3.5 text-sm text-slate-300">
-              {activeItem.caption}
+              {activeLoc?.caption ?? activeItem.caption}
             </div>
           </div>
         </div>

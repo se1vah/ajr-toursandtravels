@@ -4,16 +4,20 @@ import { SeoHead } from '../components/SeoHead';
 import { GoogleMapCard } from '../components/GoogleMapCard';
 import { BUSINESS_INFO, BookingLanguage } from '../data/business';
 import { buildDirectWhatsAppUrl, buildWhatsAppUrl } from '../utils/whatsapp';
+import { useLanguage } from '../context/LanguageContext';
 
 export function ContactPage() {
+  const { t } = useLanguage();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [preferredLanguage, setPreferredLanguage] = useState<BookingLanguage>('English');
-  const [subject, setSubject] = useState('Vehicle Rental Enquiry');
+  const [subjectIndex, setSubjectIndex] = useState(0);
   const [message, setMessage] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submittedUrl, setSubmittedUrl] = useState<string | null>(null);
+
+  const selectedSubject = t.contactPage.enquiryTypes[subjectIndex] ?? t.contactPage.enquiryTypes[0];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -21,27 +25,27 @@ export function ContactPage() {
     setSubmittedUrl(null);
 
     if (!name.trim()) {
-      setError('Please enter your full name.');
+      setError(t.contactPage.errName);
       return;
     }
     const cleanPhone = phone.replace(/\D/g, '');
     if (cleanPhone.length < 10) {
-      setError('Please enter a valid 10-digit phone number.');
+      setError(t.contactPage.errPhone);
       return;
     }
     if (email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
-      setError('Please enter a valid email address or leave it blank.');
+      setError(t.contactPage.errEmail);
       return;
     }
     if (!message.trim()) {
-      setError('Please enter your travel enquiry or message.');
+      setError(t.contactPage.errMessage);
       return;
     }
 
     const whatsappUrl = buildWhatsAppUrl({
       customerName: name,
       mobileNumber: phone,
-      serviceName: subject,
+      serviceName: selectedSubject,
       pickupLocation: 'To be confirmed',
       destination: 'To be confirmed',
       travelDate: 'Flexible / Upcoming',
@@ -54,23 +58,29 @@ export function ContactPage() {
     window.location.assign(whatsappUrl);
   };
 
+  const selectedDeskLabel =
+    preferredLanguage === 'Hindi' ? t.contacts.hindiLabel : t.contacts.englishLabel;
+
+  const selectedDeskShortName =
+    preferredLanguage === 'Hindi' ? t.bookingModal.langHindi : t.bookingModal.langEnglish;
+
   return (
     <>
       <SeoHead
-        title="Contact Us – Thangachimadam, Rameswaram | AJR Tours and Travels"
-        description="Contact AJR Tours and Travels in Thangachimadam, Tamil Nadu (623529). General Enquiries: 9025961026, Hindi Booking Support: 9342207368, English Booking Support: 8870451368."
+        title={t.contactPage.seoTitle}
+        description={t.contactPage.seoDescription}
       />
 
       <section className="bg-navy-950 text-white py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
-            Get in Touch · Thangachimadam &amp; Rameswaram
+            {t.contactPage.kicker}
           </p>
           <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight mt-2 text-balance">
-            Contact Us
+            {t.contactPage.title}
           </h1>
           <p className="mt-4 text-base sm:text-lg text-slate-300 max-w-2xl leading-relaxed">
-            Reach our dedicated Hindi or English booking desks by phone or WhatsApp, email us for group quotes, or visit our office in Thangachimadam.
+            {t.contactPage.heroSub}
           </p>
         </div>
       </section>
@@ -83,13 +93,13 @@ export function ContactPage() {
             <div className="rounded-2xl bg-white border border-slate-200 p-6 flex flex-col justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-orange-600">
-                  General Enquiries
+                  {t.contacts.generalLabel}
                 </p>
                 <p className="font-display text-2xl font-bold text-navy-900 mt-2 tabular-nums">
                   {BUSINESS_INFO.contacts.general.number}
                 </p>
                 <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-                  {BUSINESS_INFO.contacts.general.description}
+                  {t.contacts.generalDesc}
                 </p>
               </div>
               <div className="mt-6 flex flex-wrap gap-2.5">
@@ -98,7 +108,7 @@ export function ContactPage() {
                   className="inline-flex items-center gap-2 rounded-xl bg-navy-900 px-4 py-2.5 text-xs font-semibold text-white hover:bg-navy-800 transition-colors whitespace-nowrap"
                 >
                   <Phone className="w-3.5 h-3.5" />
-                  Call Now
+                  {t.contacts.callNow}
                 </a>
                 <a
                   href={buildDirectWhatsAppUrl('general')}
@@ -107,7 +117,7 @@ export function ContactPage() {
                   className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition-colors whitespace-nowrap"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
-                  WhatsApp Chat
+                  {t.contacts.whatsappChat}
                 </a>
               </div>
             </div>
@@ -116,13 +126,13 @@ export function ContactPage() {
             <div className="rounded-2xl bg-white border border-slate-200 p-6 flex flex-col justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-orange-600">
-                  Hindi Booking Support
+                  {t.contacts.hindiLabel}
                 </p>
                 <p className="font-display text-2xl font-bold text-navy-900 mt-2 tabular-nums">
                   {BUSINESS_INFO.contacts.hindi.number}
                 </p>
                 <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-                  {BUSINESS_INFO.contacts.hindi.description}
+                  {t.contacts.hindiDesc}
                 </p>
               </div>
               <div className="mt-6 flex flex-wrap gap-2.5">
@@ -131,7 +141,7 @@ export function ContactPage() {
                   className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-orange-700 transition-colors whitespace-nowrap"
                 >
                   <Phone className="w-3.5 h-3.5" />
-                  Call Hindi Desk
+                  {t.contacts.callHindi}
                 </a>
                 <a
                   href={buildDirectWhatsAppUrl('hindi')}
@@ -140,7 +150,7 @@ export function ContactPage() {
                   className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition-colors whitespace-nowrap"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
-                  WhatsApp Hindi
+                  {t.contacts.whatsappHindi}
                 </a>
               </div>
             </div>
@@ -149,13 +159,13 @@ export function ContactPage() {
             <div className="rounded-2xl bg-white border border-slate-200 p-6 flex flex-col justify-between">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wider text-orange-600">
-                  English Booking Support
+                  {t.contacts.englishLabel}
                 </p>
                 <p className="font-display text-2xl font-bold text-navy-900 mt-2 tabular-nums">
                   {BUSINESS_INFO.contacts.english.number}
                 </p>
                 <p className="text-sm text-slate-600 mt-2 leading-relaxed">
-                  {BUSINESS_INFO.contacts.english.description}
+                  {t.contacts.englishDesc}
                 </p>
               </div>
               <div className="mt-6 flex flex-wrap gap-2.5">
@@ -164,7 +174,7 @@ export function ContactPage() {
                   className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2.5 text-xs font-semibold text-white hover:bg-orange-700 transition-colors whitespace-nowrap"
                 >
                   <Phone className="w-3.5 h-3.5" />
-                  Call English Desk
+                  {t.contacts.callEnglish}
                 </a>
                 <a
                   href={buildDirectWhatsAppUrl('english')}
@@ -173,7 +183,7 @@ export function ContactPage() {
                   className="inline-flex items-center gap-2 rounded-xl border border-emerald-600 bg-emerald-50 px-4 py-2.5 text-xs font-semibold text-emerald-800 hover:bg-emerald-100 transition-colors whitespace-nowrap"
                 >
                   <MessageCircle className="w-3.5 h-3.5" />
-                  WhatsApp English
+                  {t.contacts.whatsappEnglish}
                 </a>
               </div>
             </div>
@@ -184,19 +194,19 @@ export function ContactPage() {
             <div className="lg:col-span-6 space-y-6">
               <div className="rounded-2xl bg-white border border-slate-200 p-6 space-y-4">
                 <h2 className="font-display text-xl font-bold text-navy-900">
-                  {BUSINESS_INFO.name}
+                  {t.brand.name}
                 </h2>
                 <div className="flex items-start gap-3 text-sm text-slate-600">
                   <MapPin className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-navy-900">Office Address</p>
-                    <p className="mt-0.5">{BUSINESS_INFO.address}</p>
+                    <p className="font-semibold text-navy-900">{t.contactPage.officeAddressLabel}</p>
+                    <p className="mt-0.5">{t.brand.address}</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3 text-sm text-slate-600">
                   <Mail className="w-5 h-5 text-orange-600 shrink-0 mt-0.5" />
                   <div>
-                    <p className="font-semibold text-navy-900">Email</p>
+                    <p className="font-semibold text-navy-900">{t.contactPage.emailLabel}</p>
                     <a
                       href={`mailto:${BUSINESS_INFO.email}`}
                       className="text-orange-600 hover:text-orange-700 font-medium break-all"
@@ -207,11 +217,11 @@ export function ContactPage() {
                 </div>
                 <div className="pt-2">
                   <a
-                    href={`mailto:${BUSINESS_INFO.email}?subject=${encodeURIComponent('Travel Enquiry – AJR Tours and Travels')}`}
+                    href={`mailto:${BUSINESS_INFO.email}?subject=${encodeURIComponent(`Travel Enquiry – ${BUSINESS_INFO.name}`)}`}
                     className="inline-flex items-center gap-2 rounded-xl border border-slate-300 px-4 py-2.5 text-xs font-semibold text-navy-900 hover:bg-slate-50 transition-colors"
                   >
                     <Mail className="w-4 h-4 text-orange-600" />
-                    Send Email
+                    {t.contactPage.sendEmailBtn}
                   </a>
                 </div>
               </div>
@@ -221,13 +231,13 @@ export function ContactPage() {
 
             <div className="lg:col-span-6 rounded-2xl bg-white border border-slate-200 p-6 sm:p-8">
               <p className="text-xs font-semibold uppercase tracking-wider text-orange-600">
-                Direct Message
+                {t.contactPage.formKicker}
               </p>
               <h2 className="font-display text-2xl font-bold text-navy-900 mt-1">
-                Send an Enquiry
+                {t.contactPage.formTitle}
               </h2>
               <p className="text-sm text-slate-600 mt-1">
-                Tell us about your upcoming trip, college tour, corporate transport, or vehicle requirement.
+                {t.contactPage.formSub}
               </p>
 
               <form onSubmit={handleSubmit} className="mt-6 space-y-4">
@@ -245,7 +255,9 @@ export function ContactPage() {
                   <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900 space-y-2">
                     <div className="flex items-center gap-2 font-semibold">
                       <CheckCircle2 className="w-4 h-4 text-emerald-700" />
-                      <span>Enquiry prepared for {preferredLanguage} Booking Support</span>
+                      <span>
+                        {t.contactPage.preparedText} {selectedDeskLabel}
+                      </span>
                     </div>
                     <a
                       href={submittedUrl}
@@ -254,7 +266,7 @@ export function ContactPage() {
                       className="inline-flex items-center gap-2 rounded-lg bg-emerald-700 px-4 py-2 text-xs font-semibold text-white hover:bg-emerald-800 transition-colors"
                     >
                       <MessageCircle className="w-4 h-4" />
-                      Open WhatsApp Now
+                      {t.contactPage.openWhatsappNow}
                     </a>
                   </div>
                 )}
@@ -262,7 +274,7 @@ export function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="contact-name" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                      Your Name *
+                      {t.contactPage.nameLabel}
                     </label>
                     <input
                       id="contact-name"
@@ -270,13 +282,13 @@ export function ContactPage() {
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      placeholder="Full name"
+                      placeholder={t.contactPage.namePlaceholder}
                       className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                     />
                   </div>
                   <div>
                     <label htmlFor="contact-phone" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                      Mobile Number *
+                      {t.contactPage.phoneLabel}
                     </label>
                     <input
                       id="contact-phone"
@@ -284,7 +296,7 @@ export function ContactPage() {
                       required
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="10-digit mobile number"
+                      placeholder={t.contactPage.phonePlaceholder}
                       className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 tabular-nums focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                     />
                   </div>
@@ -293,20 +305,20 @@ export function ContactPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="contact-email" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                      Email Address (Optional)
+                      {t.contactPage.emailFieldLabel}
                     </label>
                     <input
                       id="contact-email"
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
+                      placeholder={t.contactPage.emailPlaceholder}
                       className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                     />
                   </div>
                   <div>
                     <label htmlFor="contact-lang" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                      Preferred Language *
+                      {t.contactPage.langLabel}
                     </label>
                     <select
                       id="contact-lang"
@@ -314,33 +326,33 @@ export function ContactPage() {
                       onChange={(e) => setPreferredLanguage(e.target.value as BookingLanguage)}
                       className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                     >
-                      <option value="English">English (8870451368)</option>
-                      <option value="Hindi">Hindi (9342207368)</option>
+                      <option value="English">{t.quickBooking.englishDeskOption}</option>
+                      <option value="Hindi">{t.quickBooking.hindiDeskOption}</option>
                     </select>
                   </div>
                 </div>
 
                 <div>
                   <label htmlFor="contact-subject" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Enquiry Type
+                    {t.contactPage.enquiryTypeLabel}
                   </label>
                   <select
                     id="contact-subject"
-                    value={subject}
-                    onChange={(e) => setSubject(e.target.value)}
+                    value={subjectIndex}
+                    onChange={(e) => setSubjectIndex(Number(e.target.value))}
                     className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                   >
-                    <option value="Vehicle Rental Enquiry">Vehicle Rental Enquiry</option>
-                    <option value="Tour Package Quotation">Tour Package Quotation</option>
-                    <option value="Pilgrimage Trip Planning">Pilgrimage Trip Planning</option>
-                    <option value="School / College / Industrial Visit">School / College / Industrial Visit</option>
-                    <option value="Corporate / Wedding Transportation">Corporate / Wedding Transportation</option>
+                    {t.contactPage.enquiryTypes.map((label, idx) => (
+                      <option key={label} value={idx}>
+                        {label}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
                 <div>
                   <label htmlFor="contact-message" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Enquiry Details *
+                    {t.contactPage.detailsLabel}
                   </label>
                   <textarea
                     id="contact-message"
@@ -348,7 +360,7 @@ export function ContactPage() {
                     required
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
-                    placeholder="Share pickup location, destination, travel dates, and number of passengers..."
+                    placeholder={t.contactPage.detailsPlaceholder}
                     className="w-full rounded-xl border border-slate-300 bg-white px-3.5 py-2.5 text-sm text-slate-900 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
@@ -359,16 +371,16 @@ export function ContactPage() {
                     className="inline-flex items-center justify-center gap-2 rounded-xl bg-orange-600 px-6 py-3 text-sm font-semibold text-white hover:bg-orange-700 transition-colors"
                   >
                     <MessageCircle className="w-4 h-4" />
-                    Submit via WhatsApp ({preferredLanguage})
+                    {t.contactPage.submitWhatsapp} ({selectedDeskShortName})
                   </button>
                   <a
-                    href={`mailto:${BUSINESS_INFO.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(
+                    href={`mailto:${BUSINESS_INFO.email}?subject=${encodeURIComponent(selectedSubject)}&body=${encodeURIComponent(
                       `Name: ${name}\nPhone: ${phone}\nPreferred Language: ${preferredLanguage}\n\n${message}`,
                     )}`}
                     className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-300 px-5 py-3 text-sm font-semibold text-navy-900 hover:bg-slate-50 transition-colors"
                   >
                     <Mail className="w-4 h-4 text-orange-600" />
-                    Send via Email
+                    {t.contactPage.sendViaEmail}
                   </a>
                 </div>
               </form>

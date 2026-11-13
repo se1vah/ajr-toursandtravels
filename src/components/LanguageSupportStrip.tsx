@@ -1,25 +1,28 @@
 import { Phone, MessageCircle, Mail } from 'lucide-react';
 import { BUSINESS_INFO } from '../data/business';
 import { buildDirectWhatsAppUrl } from '../utils/whatsapp';
+import { useLanguage } from '../context/LanguageContext';
 
 export function LanguageSupportStrip() {
+  const { t } = useLanguage();
+
   return (
     <section
-      aria-label="Dedicated Hindi and English Booking Support"
+      aria-label={t.languageStrip.heading}
       className="bg-navy-900 py-14 text-white"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4 mb-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
-              Multilingual Travel Desk
+              {t.languageStrip.kicker}
             </p>
             <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-white mt-1 text-balance">
-              Dedicated Hindi &amp; English Booking Support
+              {t.languageStrip.heading}
             </h2>
           </div>
           <p className="text-sm text-slate-300 max-w-xl">
-            Speak directly with our booking coordinators in your preferred language for instant vehicle confirmation and custom route quotes.
+            {t.languageStrip.subtitle}
           </p>
         </div>
 
@@ -28,13 +31,13 @@ export function LanguageSupportStrip() {
           <div className="rounded-2xl bg-navy-800/80 border border-white/10 p-6 flex flex-col justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
-                Hindi Booking Support
+                {t.contacts.hindiLabel}
               </p>
               <p className="font-display text-2xl font-bold text-white mt-2 tabular-nums">
                 {BUSINESS_INFO.contacts.hindi.number}
               </p>
               <p className="text-sm text-slate-300 mt-2">
-                {BUSINESS_INFO.contacts.hindi.description}
+                {t.contacts.hindiDesc}
               </p>
             </div>
             <div className="mt-6 flex flex-wrap gap-2.5">
@@ -43,7 +46,7 @@ export function LanguageSupportStrip() {
                 className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors whitespace-nowrap"
               >
                 <Phone className="w-3.5 h-3.5" />
-                Call Hindi Desk
+                {t.contacts.callHindi}
               </a>
               <a
                 href={buildDirectWhatsAppUrl('hindi')}
@@ -52,7 +55,7 @@ export function LanguageSupportStrip() {
                 className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-xs font-semibold text-white hover:bg-white/10 transition-colors whitespace-nowrap"
               >
                 <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-                WhatsApp Hindi
+                {t.contacts.whatsappHindi}
               </a>
             </div>
           </div>
@@ -61,13 +64,13 @@ export function LanguageSupportStrip() {
           <div className="rounded-2xl bg-navy-800/80 border border-white/10 p-6 flex flex-col justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
-                English Booking Support
+                {t.contacts.englishLabel}
               </p>
               <p className="font-display text-2xl font-bold text-white mt-2 tabular-nums">
                 {BUSINESS_INFO.contacts.english.number}
               </p>
               <p className="text-sm text-slate-300 mt-2">
-                {BUSINESS_INFO.contacts.english.description}
+                {t.contacts.englishDesc}
               </p>
             </div>
             <div className="mt-6 flex flex-wrap gap-2.5">
@@ -76,7 +79,7 @@ export function LanguageSupportStrip() {
                 className="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 text-xs font-semibold text-white hover:bg-orange-700 transition-colors whitespace-nowrap"
               >
                 <Phone className="w-3.5 h-3.5" />
-                Call English Desk
+                {t.contacts.callEnglish}
               </a>
               <a
                 href={buildDirectWhatsAppUrl('english')}
@@ -85,7 +88,7 @@ export function LanguageSupportStrip() {
                 className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-xs font-semibold text-white hover:bg-white/10 transition-colors whitespace-nowrap"
               >
                 <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-                WhatsApp English
+                {t.contacts.whatsappEnglish}
               </a>
             </div>
           </div>
@@ -94,13 +97,13 @@ export function LanguageSupportStrip() {
           <div className="rounded-2xl bg-navy-800/80 border border-white/10 p-6 flex flex-col justify-between">
             <div>
               <p className="text-xs font-semibold uppercase tracking-wider text-orange-400">
-                General Enquiries &amp; Dispatch
+                {t.contacts.generalLabel}
               </p>
               <p className="font-display text-2xl font-bold text-white mt-2 tabular-nums">
                 {BUSINESS_INFO.contacts.general.number}
               </p>
               <p className="text-sm text-slate-300 mt-2">
-                {BUSINESS_INFO.contacts.general.description}
+                {t.contacts.generalDesc}
               </p>
             </div>
             <div className="mt-6 flex flex-wrap gap-2.5">
@@ -109,14 +112,14 @@ export function LanguageSupportStrip() {
                 className="inline-flex items-center gap-2 rounded-xl bg-white text-navy-900 px-4 py-2 text-xs font-semibold hover:bg-slate-100 transition-colors whitespace-nowrap"
               >
                 <Phone className="w-3.5 h-3.5 text-orange-600" />
-                Call General
+                {t.contacts.callGeneral}
               </a>
               <a
                 href={`mailto:${BUSINESS_INFO.email}`}
                 className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/5 px-4 py-2 text-xs font-semibold text-white hover:bg-white/10 transition-colors whitespace-nowrap"
               >
                 <Mail className="w-3.5 h-3.5 text-orange-400" />
-                Email Us
+                {t.contacts.emailUs}
               </a>
             </div>
           </div>
